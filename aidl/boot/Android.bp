@@ -15,21 +15,24 @@
 //
 
 package {
-    // See: http://go/android-license-faq
-    // A large-scale-change added 'default_applicable_licenses' to import
-    // all of the 'license_kinds' from "hardware_interfaces_license"
-    // to get the below license kinds:
-    //   SPDX-license-identifier-Apache-2.0
-    default_applicable_licenses: ["hardware_interfaces_license"],
+    default_applicable_licenses: ["Android-Apache-2.0"],
 }
 
 cc_defaults {
     name: "android.hardware.boot-service_common-samsung",
     relative_install_path: "hw",
-    defaults: ["libboot_control_defaults"],
     srcs: [
         "main.cpp",
         "BootControl.cpp",
+    ],
+    shared_libs: [
+        "libbase",
+        "libbinder_ndk",
+        "liblog",
+    ],
+    static_libs: [
+        "android.hardware.boot-V1-ndk",
+        "libfstab",
     ],
 }
 
@@ -38,19 +41,8 @@ cc_binary {
     defaults: ["android.hardware.boot-service_common-samsung"],
     vendor: true,
 
-    stl: "c++_static",
     init_rc: ["android.hardware.boot-service.samsung.rc"],
     vintf_fragments: ["android.hardware.boot-service.samsung.xml"],
-    shared_libs: [
-        "libbinder_ndk",
-        "liblog",
-    ],
-    static_libs: [
-        "android.hardware.boot@1.1",
-        "android.hardware.boot-V1-ndk",
-        "libbase",
-        "libboot_control",
-    ],
 }
 
 cc_binary {
@@ -59,14 +51,4 @@ cc_binary {
     init_rc: ["android.hardware.boot-service.samsung_recovery.rc"],
     vintf_fragments: ["android.hardware.boot-service.samsung.xml"],
     recovery: true,
-
-    shared_libs: [
-        "libbase",
-        "libbinder_ndk",
-        "android.hardware.boot@1.1",
-        "android.hardware.boot-V1-ndk",
-    ],
-    static_libs: [
-        "libboot_control",
-    ],
 }

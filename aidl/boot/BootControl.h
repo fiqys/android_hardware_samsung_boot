@@ -17,9 +17,34 @@
 #pragma once
 
 #include <aidl/android/hardware/boot/BnBootControl.h>
-#include <libboot_control/libboot_control.h>
 
 namespace aidl::android::hardware::boot {
+
+#define EXYNOS_SLOT_INFO_MAGIC "EXBC"
+#define EXYNOS_SLOT_INFO_MAGIC_SIZE 4
+#define SLOT_INFO_PARTITION "/slotinfo"
+#define MAX_SLOT_NUMBER 2
+
+constexpr size_t SLOTINFO_OFFSET = 2 * 1024;
+
+struct slot_metadata {
+    uint8_t bootable;
+    uint8_t is_active;
+    uint8_t boot_successful;
+    uint8_t tries_remaining;
+    uint8_t reserved[4];
+} __attribute__((packed));
+
+struct slot_data {
+    uint8_t magic[EXYNOS_SLOT_INFO_MAGIC_SIZE];
+    struct slot_metadata metadata[MAX_SLOT_NUMBER];
+    MergeStatus merge_status : 8;
+    uint8_t ota_flag;
+    uint8_t reserved[10];
+} __attribute__((packed));
+
+static_assert(sizeof(struct slot_data) == 32,
+              "check struct layout");
 
 class BootControl final : public BnBootControl {
   public:
@@ -39,7 +64,16 @@ class BootControl final : public BnBootControl {
             ::aidl::android::hardware::boot::MergeStatus in_status) override;
 
   private:
-    ::android::bootable::BootControl impl_;
+    bool IsValidSlot(int32_t slot);
+    bool OpenSlotInfo();
+    bool ReadSlot();
+    bool WriteSlot();
+    void ResetSlot();
+
+    int slotinfo_fd_ = -1;
+    struct slot_data slot_{};
+
+    static constexpr const char* kSuffix[MAX_SLOT_NUMBER] = {"_a", "_b"};
 };
 
 }  // namespace aidl::android::hardware::boot

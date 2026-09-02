@@ -24,7 +24,7 @@ package {
 }
 
 cc_defaults {
-    name: "android.hardware.boot-service_common",
+    name: "android.hardware.boot-service_common-samsung",
     relative_install_path: "hw",
     defaults: ["libboot_control_defaults"],
     srcs: [
@@ -34,8 +34,8 @@ cc_defaults {
 }
 
 cc_binary {
-    name: "android.hardware.boot-service.default",
-    defaults: ["android.hardware.boot-service_common"],
+    name: "android.hardware.boot-service.samsung",
+    defaults: ["android.hardware.boot-service_common-samsung"],
     vendor: true,
 
     stl: "c++_static",
@@ -51,17 +51,17 @@ cc_binary {
     ],
 
     vintf_fragment_modules: [
-        "android.hardware.boot-service.default.xml",
+        "android.hardware.boot-service.samsung.xml",
     ],
 
     installable: false, // installed in APEX
 }
 
 cc_binary {
-    name: "android.hardware.boot-service.default_recovery",
-    defaults: ["android.hardware.boot-service_common"],
-    init_rc: ["android.hardware.boot-service.default_recovery.rc"],
-    vintf_fragment_modules: ["android.hardware.boot-service.default.xml.recovery"],
+    name: "android.hardware.boot-service.samsung_recovery",
+    defaults: ["android.hardware.boot-service_common-samsung"],
+    init_rc: ["android.hardware.boot-service.samsung_recovery.rc"],
+    vintf_fragment_modules: ["android.hardware.boot-service.samsung.xml.recovery"],
     recovery: true,
 
     shared_libs: [
@@ -76,20 +76,20 @@ cc_binary {
 }
 
 prebuilt_etc {
-    name: "android.hardware.boot-service.default.rc",
-    src: "android.hardware.boot-service.default.rc",
+    name: "android.hardware.boot-service.samsung.rc",
+    src: "android.hardware.boot-service.samsung.rc",
     installable: false,
 }
 
 vintf_fragment {
-    name: "android.hardware.boot-service.default.xml.recovery",
-    src: "android.hardware.boot-service.default.xml",
+    name: "android.hardware.boot-service.samsung.xml.recovery",
+    src: "android.hardware.boot-service.samsung.xml",
     recovery: true,
 }
 
 vintf_fragment {
-    name: "android.hardware.boot-service.default.xml",
-    src: "android.hardware.boot-service.default.xml",
+    name: "android.hardware.boot-service.samsung.xml",
+    src: "android.hardware.boot-service.samsung.xml",
     vendor: true,
 }
 
@@ -103,9 +103,9 @@ apex {
     updatable: false,
 
     binaries: [
-        "android.hardware.boot-service.default",
+        "android.hardware.boot-service.samsung",
     ],
     prebuilts: [
-        "android.hardware.boot-service.default.rc",
+        "android.hardware.boot-service.samsung.rc",
     ],
 }

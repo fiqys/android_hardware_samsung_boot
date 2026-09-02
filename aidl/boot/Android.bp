@@ -23,26 +23,50 @@ package {
     default_applicable_licenses: ["hardware_interfaces_license"],
 }
 
-aidl_interface {
-    name: "android.hardware.boot",
-    vendor_available: true,
-    srcs: ["android/hardware/boot/*.aidl"],
-    stability: "vintf",
-    recovery_available: true,
-    backend: {
-        java: {
-            sdk_version: "module_current",
-        },
-        cpp: {
-            enabled: false,
-        },
-    },
-    versions_with_info: [
-        {
-            version: "1",
-            imports: [],
-        },
+cc_defaults {
+    name: "android.hardware.boot-service_common-samsung",
+    relative_install_path: "hw",
+    defaults: ["libboot_control_defaults"],
+    srcs: [
+        "main.cpp",
+        "BootControl.cpp",
     ],
-    frozen: true,
+}
 
+cc_binary {
+    name: "android.hardware.boot-service.samsung",
+    defaults: ["android.hardware.boot-service_common-samsung"],
+    vendor: true,
+
+    stl: "c++_static",
+    init_rc: ["android.hardware.boot-service.samsung.rc"],
+    vintf_fragments: ["android.hardware.boot-service.samsung.xml"],
+    shared_libs: [
+        "libbinder_ndk",
+        "liblog",
+    ],
+    static_libs: [
+        "android.hardware.boot@1.1",
+        "android.hardware.boot-V1-ndk",
+        "libbase",
+        "libboot_control",
+    ],
+}
+
+cc_binary {
+    name: "android.hardware.boot-service.samsung_recovery",
+    defaults: ["android.hardware.boot-service_common-samsung"],
+    init_rc: ["android.hardware.boot-service.samsung_recovery.rc"],
+    vintf_fragments: ["android.hardware.boot-service.samsung.xml"],
+    recovery: true,
+
+    shared_libs: [
+        "libbase",
+        "libbinder_ndk",
+        "android.hardware.boot@1.1",
+        "android.hardware.boot-V1-ndk",
+    ],
+    static_libs: [
+        "libboot_control",
+    ],
 }
